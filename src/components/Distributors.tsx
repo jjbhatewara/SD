@@ -75,7 +75,7 @@ const Distributors = () => {
             <div className="bg-gray-50 rounded-3xl shadow-xl p-6 border border-gray-200 overflow-hidden">
               {/* Gradient Overlay */}
               <div className="absolute inset-0 bg-gradient-to-r from-red-500/5 via-gray-500/5 to-red-500/5 pointer-events-none"></div>
-              
+
               <div className="relative flex items-center justify-between">
                 {/* Previous Button */}
                 <button
@@ -89,41 +89,50 @@ const Distributors = () => {
                 {/* Companies Grid */}
                 <div className="flex-1 mx-12">
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-                    {visibleCompanies.map((company, index) => (
-                      <div
-                        key={`${currentIndex}-${index}`}
-                        className="group flex flex-col items-center justify-center p-4 rounded-2xl hover:bg-white transition-all duration-500 min-h-[100px] border border-transparent hover:border-red-200 hover:shadow-lg"
-                      >
-                        <div className="relative w-12 h-12 mb-3">
-                          <div className="absolute inset-0 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl group-hover:scale-110 transition-transform duration-500 shadow-lg group-hover:shadow-xl"></div>
-                          <div className="relative w-full h-full flex items-center justify-center">
-                            <img
-                              src={`https://logo.clearbit.com/${company.toLowerCase().replace(/[^a-z0-9]/g, '')}.com`}
-                              alt={`${company} logo`}
-                              className="w-8 h-8 object-contain rounded relative z-10"
-                              onError={(e) => {
-                                const target = e.target as HTMLImageElement;
-                                target.style.display = 'none';
-                                const fallback = target.nextElementSibling as HTMLElement;
-                                if (fallback) fallback.style.display = 'flex';
-                              }}
-                            />
-                            <div 
-                              className="absolute inset-0 text-white font-bold text-sm hidden items-center justify-center"
-                              style={{ display: 'none' }}
-                            >
-                              {company.charAt(0)}
+                    {visibleCompanies.map((companyObj, idx) => {
+                      const obj = companyObj as any;
+                      const name = obj?.name || String(companyObj);
+                      const domain = obj?.domain || '';
+                      const clearbitUrl = domain ? `https://img.logo.dev/${domain}?token=pk_XklF9pjBQ-6noEdGC5zxIQ` : `https://img.logo.dev/${name.toLowerCase().replace(/[^a-z0-9]/g, '')}.com?token=pk_XklF9pjBQ-6noEdGC5zxIQ`;
+                      const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+                      const localFallback = `/logos/${slug}.svg`;
+
+                      return (
+                        <div
+                          key={`${currentIndex}-${idx}`}
+                          className="group flex flex-col items-center justify-start p-4 rounded-2xl hover:bg-white transition-all duration-500 h-32 md:h-36 border border-transparent hover:border-red-200 hover:shadow-lg"
+                        >
+                          <div className="relative w-12 h-12 mb-3">
+                            <div className="absolute inset-0 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl group-hover:scale-110 transition-transform duration-500 shadow-lg group-hover:shadow-xl"></div>
+                            <div className="relative w-full h-full flex items-center justify-center">
+                              <img
+                                src={clearbitUrl}
+                                alt={`${name} logo`}
+                                className="w-8 h-8 object-contain rounded relative z-10"
+                                onError={(e) => {
+                                  const target = e.target as HTMLImageElement;
+                                  const local = `/logos/${slug}.svg`;
+                                  target.onerror = null;
+                                  target.src = local;
+                                }}
+                              />
+                              <div 
+                                className="absolute inset-0 text-white font-bold text-sm hidden items-center justify-center"
+                                style={{ display: 'none' }}
+                              >
+                                {name.charAt(0)}
+                              </div>
+                            </div>
+                            <div className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-r from-gray-400 to-gray-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                              <Sparkles className="w-2 h-2 text-white p-0.5" />
                             </div>
                           </div>
-                          <div className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-r from-gray-400 to-gray-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                            <Sparkles className="w-2 h-2 text-white p-0.5" />
-                          </div>
+                          <h3 className="text-xs font-bold text-gray-900 text-center leading-tight group-hover:text-red-800 transition-colors duration-300 mt-2 h-6 overflow-hidden truncate whitespace-nowrap w-full">
+                            {name}
+                          </h3>
                         </div>
-                        <h3 className="text-xs font-bold text-gray-900 text-center leading-tight group-hover:text-red-800 transition-colors duration-300">
-                          {company}
-                        </h3>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
 
